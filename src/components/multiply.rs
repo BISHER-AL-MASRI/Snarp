@@ -1,34 +1,33 @@
-use crate::util::debug::is_debug;
-use colored::*;
+use crate::util::{debug::is_debug, errorhandler::errorhandler};
 use std::collections::HashMap;
 
 pub fn multiply_func(vars: &mut HashMap<String, String>, args: Vec<&str>) {
     if args.len() != 3 {
-        eprintln!(
-            "{}",
-            format!("Invalid number of arguments for multiply").red()
-        );
+        errorhandler(&format!(
+            "Invalid number of arguments for multiply: {}",
+            args.len()
+        ));
         return;
     }
 
     let var_name = args[0].to_string();
     let num1 = match vars.get(args[1]) {
         Some(val) => val.parse::<i32>().unwrap_or_else(|_| {
-            eprintln!("Invalid number: {}", args[1]);
+            errorhandler(&format!("Invalid number: {}", args[1]));
             std::process::exit(1);
         }),
         None => args[1].parse::<i32>().unwrap_or_else(|_| {
-            eprintln!("Invalid number: {}", args[1]);
+            errorhandler(&format!("Invalid number: {}", args[1]));
             std::process::exit(1);
         }),
     };
     let num2 = match vars.get(args[2]) {
         Some(val) => val.parse::<i32>().unwrap_or_else(|_| {
-            eprintln!("Invalid number: {}", args[2]);
+            errorhandler(&format!("Invalid number: {}", args[2]));
             std::process::exit(1);
         }),
         None => args[2].parse::<i32>().unwrap_or_else(|_| {
-            eprintln!("Invalid number: {}", args[2]);
+            errorhandler(&format!("Invalid number: {}", args[2]));
             std::process::exit(1);
         }),
     };

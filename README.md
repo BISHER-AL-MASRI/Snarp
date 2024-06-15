@@ -5,4 +5,3 @@ A programming language/interpetor
 
 it is W.I.P and serves no purpouse
 
-functions dont work

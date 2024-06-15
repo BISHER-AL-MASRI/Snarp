@@ -1,4 +1,4 @@
 // args.rs
-pub fn main() -> Vec<String> {
+pub fn args() -> Vec<String> {
     std::env::args().collect()
 }

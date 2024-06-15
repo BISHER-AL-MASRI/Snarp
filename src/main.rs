@@ -1,10 +1,8 @@
-use colored::*;
 use std::collections::HashMap;
 use std::io;
 use std::sync::{Arc, Mutex};
 
 mod components;
-mod util;
 
 use components::add::add_func;
 use components::divide::divide_func;
@@ -15,15 +13,17 @@ use components::r#return::return_func;
 use components::subtract::subtract_func;
 use components::var::var_func;
 
+mod util;
 use util::args;
+use util::errorhandler::errorhandler;
 
 fn get_file() -> String {
-    let args = args::main();
+    let args = args::args();
     return args[1].clone();
 }
 
 fn main() -> io::Result<()> {
-    let args = args::main();
+    let args = args::args();
     if args.len() <= 1 {
         println!("Snarp Version 0.1.0 \n Shell Mode");
         shell_exec()?;
@@ -35,9 +35,15 @@ fn main() -> io::Result<()> {
 
 fn file_exec() -> io::Result<()> {
     let file = get_file();
-    let contents = std::fs::read_to_string(file)?;
+    
+    let fileexten = file.split('.').last().unwrap_or("");
+    if fileexten != "sp" {
+        errorhandler(&format!("Unknown file extension: {}", fileexten));
+        return Ok(());
+    }
 
-    let mut lines = contents.lines();
+    let contents = std::fs::read_to_string(&file)?;
+    let lines = contents.lines();
 
     let table: Arc<
         Mutex<HashMap<&str, Box<dyn Fn(&mut HashMap<String, String>, Vec<&str>) + Send>>>,
@@ -56,7 +62,7 @@ fn file_exec() -> io::Result<()> {
         table.insert("multiply", Box::new(multiply_func));
     }
 
-    Ok(while let Some(line) = lines.next() {
+    for line in lines {
         let line = line.trim();
 
         if line.is_empty() || line.starts_with("//") {
@@ -69,12 +75,11 @@ fn file_exec() -> io::Result<()> {
             let args = words[1..].to_vec();
             f(&mut vars.lock().unwrap(), args);
         } else {
-            eprintln!(
-                "{}",
-                format!("Error: Unknown command: {} \n ---------------------", line).red()
-            );
+            errorhandler(&format!("Unknown command: {}", line));
         }
-    })
+    }
+
+    Ok(())
 }
 
 fn shell_exec() -> io::Result<()> {
@@ -89,6 +94,9 @@ fn shell_exec() -> io::Result<()> {
         table.insert("var", Box::new(var_func));
         table.insert("add", Box::new(add_func));
         table.insert("exit", Box::new(exit_func));
+        table.insert("divide", Box::new(divide_func));
+        table.insert("subtract", Box::new(subtract_func));
+        table.insert("multiply", Box::new(multiply_func));
     }
 
     let mut line = String::new();
@@ -107,10 +115,7 @@ fn shell_exec() -> io::Result<()> {
             let args = words[1..].to_vec();
             f(&mut vars.lock().unwrap(), args);
         } else {
-            eprintln!(
-                "{}",
-                format!("Error: Unknown command: {} \n ---------------------", line).red()
-            );
+            errorhandler(&format!("Unknown command: {}", line));
         }
     }
 }

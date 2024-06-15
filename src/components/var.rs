@@ -1,10 +1,13 @@
 use crate::util::debug::is_debug;
-use colored::*;
 use std::collections::HashMap;
+use crate::util::errorhandler::errorhandler;
 
 pub fn var_func(vars: &mut HashMap<String, String>, args: Vec<&str>) {
     if args.len() != 2 {
-        eprintln!("{}", format!("Invalid number of arguments for var").red());
+        errorhandler(&format!(
+            "Invalid number of arguments for var: {}",
+            args.len()
+        ));
         return;
     }
 

@@ -1,6 +1,6 @@
 // test
 //test
-/ <- should be error
+/ 
 
 multiply m 12 67
 add a 53 56

@@ -1,11 +1,15 @@
 use colored::*;
 use std::collections::HashMap;
 
+use crate::util::errorhandler::errorhandler;
+
 pub fn return_func(vars: &mut HashMap<String, String>, args: Vec<&str>) {
     if args.is_empty() {
-        eprintln!(
-            "{}",
-            format!("No argument provided for return function").red()
+        errorhandler(
+            &format!(
+                "Invalid number of arguments for return: {}",
+                args.len()
+            )
         );
         return;
     }
