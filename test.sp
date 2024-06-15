@@ -1,30 +1,25 @@
-// Define variables
-var x 10
-var y 20
+// test
+//test
+/ <- should be error
 
-// Add variables
-add sum x y
+multiply m 12 67
+add a 53 56
+subtract s a m
+divide d s s
+divide ds s m
 
-// Print the sum
-print The sum of x and y is *sum
+var string string
+var number 12
 
-// Define a function
-Func greet() {
-    print Hello, world!
-)
-
-// Call the function
-greet()
-
-// Define another function with parameters
-Func addAndPrint() {
-    var result 0
-    add result 5 7
-    print The result of adding 5 and 7 is *result
-)
-
-// Call the function with arguments
-addAndPrint()
-
-// Exit with code 0
-exit 0
+print *m
+print *a
+print *s
+print *d
+print *ds
+print *string
+print *number
+print space space
+// TODO
+// FIX VAR CANNOT HANDLE SPACES
+// ADD IF STATEMENT
+// ADD FUNCTIONS (😭)
