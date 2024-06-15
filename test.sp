@@ -19,7 +19,3 @@ print *ds
 print *string
 print *number
 print space space
-// TODO
-// FIX VAR CANNOT HANDLE SPACES
-// ADD IF STATEMENT
-// ADD FUNCTIONS (😭)
