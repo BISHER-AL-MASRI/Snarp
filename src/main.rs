@@ -34,7 +34,7 @@ fn file_exec() -> io::Result<()> {
     let file = get_file();
 
     let fileexten = file.split('.').last().unwrap_or("");
-    if fileexten != "sp" {
+    if fileexten != "sn" {
         eprintln!(
             "{}",
             format!(
