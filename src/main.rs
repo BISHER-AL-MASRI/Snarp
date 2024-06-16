@@ -1,17 +1,18 @@
+use colored::*;
 use std::collections::HashMap;
 use std::io;
 use std::sync::{Arc, Mutex};
 
 mod components;
+mod util;
 
 use components::exit::exit_func;
 use components::print::print_func;
-use components::r#return::return_func;
 use components::r#let::let_func;
+use components::r#return::return_func;
 
-mod util;
 use util::args;
-use util::errorhandler::errorhandler;
+use util::assign::assign_func;
 
 fn get_file() -> String {
     let args = args::args();
@@ -31,10 +32,17 @@ fn main() -> io::Result<()> {
 
 fn file_exec() -> io::Result<()> {
     let file = get_file();
-    
+
     let fileexten = file.split('.').last().unwrap_or("");
     if fileexten != "sp" {
-        errorhandler(&format!("Unknown file extension: {}", fileexten));
+        eprintln!(
+            "{}",
+            format!(
+                "Error: Unknown file extension: {} \n ---------------------",
+                fileexten
+            )
+            .red()
+        );
         return Ok(());
     }
 
@@ -66,8 +74,13 @@ fn file_exec() -> io::Result<()> {
         if let Some(f) = table.lock().unwrap().get(words[0]) {
             let args = words[1..].to_vec();
             f(&mut vars.lock().unwrap(), args);
+        } else if words.len() > 1 && words[1] == "=" {
+            assign_func(&mut vars.lock().unwrap(), words.as_slice());
         } else {
-            errorhandler(&format!("Unknown command: {}", line));
+            eprintln!(
+                "{}",
+                format!("Error: Unknown command: {} \n ---------------------", line).red()
+            );
         }
     }
 
@@ -79,12 +92,11 @@ fn shell_exec() -> io::Result<()> {
         Mutex<HashMap<&str, Box<dyn Fn(&mut HashMap<String, String>, Vec<&str>) + Send>>>,
     > = Arc::new(Mutex::new(HashMap::new()));
     let vars: Arc<Mutex<HashMap<String, String>>> = Arc::new(Mutex::new(HashMap::new()));
-    
     {
         let mut table = table.lock().unwrap();
         table.insert("print", Box::new(print_func));
         table.insert("return", Box::new(return_func));
-        table.insert("var", Box::new(let_func));
+        table.insert("let", Box::new(let_func));
         table.insert("exit", Box::new(exit_func));
     }
 
@@ -103,8 +115,13 @@ fn shell_exec() -> io::Result<()> {
         if let Some(f) = table.lock().unwrap().get(words[0]) {
             let args = words[1..].to_vec();
             f(&mut vars.lock().unwrap(), args);
+        } else if words.len() > 1 && words[1] == "=" {
+            assign_func(&mut vars.lock().unwrap(), words.as_slice());
         } else {
-            errorhandler(&format!("Unknown command: {}", line));
+            eprintln!(
+                "{}",
+                format!("Error: Unknown command: {} \n ---------------------", line).red()
+            );
         }
     }
 }

@@ -1,3 +1,3 @@
-let a = 12+12
+let time = "10:54 AM"
 
-print *a
+print time is *time

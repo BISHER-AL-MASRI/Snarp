@@ -1,16 +1,13 @@
-use colored::*;
 use std::collections::HashMap;
 
-use crate::util::errorhandler::errorhandler;
+use crate::util::warninghandler::warninghandler;
 
 pub fn return_func(vars: &mut HashMap<String, String>, args: Vec<&str>) {
     if args.is_empty() {
-        errorhandler(
-            &format!(
-                "Invalid number of arguments for return: {}",
-                args.len()
-            )
-        );
+        warninghandler(&format!(
+            "Invalid number of arguments for return: {}, returning with code 0 instead",
+            args.len()
+        ));
         return;
     }
 
@@ -19,11 +16,17 @@ pub fn return_func(vars: &mut HashMap<String, String>, args: Vec<&str>) {
         num
     } else if let Some(value) = vars.get(arg) {
         value.parse::<i32>().unwrap_or_else(|_| {
-            eprintln!("{} {}", format!("Invalid number:").red(), arg);
+            warninghandler(&format!(
+                "Invalid number: {}, returning with code 1 instead",
+                value
+            ));
             std::process::exit(1);
         })
     } else {
-        eprintln!("{} {}", format!("Unknown variable:").red(), arg);
+        warninghandler(&format!(
+            "Invalid number: {}, returning with code 1 instead",
+            arg
+        ));
         std::process::exit(1);
     };
 

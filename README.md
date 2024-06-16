@@ -1,7 +1,10 @@
 # Snarp
 A programming language/interpetor
 
-## DONT USE IT
+## Snap is in beta
 
-it is W.I.P and serves no purpose
+If there are any bugs please make an issue
 
+## Pull Requests
+
+If you want to make a pull request please let say the changes you made
