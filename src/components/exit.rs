@@ -1,11 +1,10 @@
 use colored::*;
 use std::collections::HashMap;
-
-use crate::util::errorhandler::errorhandler;
+use crate::util::warninghandler::warninghandler;
 
 pub fn exit_func(vars: &mut HashMap<String, String>, args: Vec<&str>) {
     if args.len() != 1 {
-        errorhandler(&format!(
+        warninghandler(&format!(
             "{} {}",
             format!("Invalid number of arguments for exit:").red(),
             args.len()
@@ -15,11 +14,11 @@ pub fn exit_func(vars: &mut HashMap<String, String>, args: Vec<&str>) {
 
     let code = match vars.get(args[0]) {
         Some(val) => val.parse::<i32>().unwrap_or_else(|_| {
-            errorhandler(&format!("Invalid number: {}", args[0]));
+            warninghandler(&format!("Invalid number: {}, exitting with code 0 instead", args[0]));
             std::process::exit(0);
         }),
         None => args[0].parse::<i32>().unwrap_or_else(|_| {
-            errorhandler(&format!("Invalid number: {}", args[0]));
+            warninghandler(&format!("Invalid number: {}, exitting with code 0 instead", args[0]));
             std::process::exit(0);
         }),
     };

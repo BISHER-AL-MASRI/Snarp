@@ -4,14 +4,10 @@ use std::sync::{Arc, Mutex};
 
 mod components;
 
-use components::add::add_func;
-use components::divide::divide_func;
 use components::exit::exit_func;
-use components::multiply::multiply_func;
 use components::print::print_func;
 use components::r#return::return_func;
-use components::subtract::subtract_func;
-use components::var::var_func;
+use components::r#let::let_func;
 
 mod util;
 use util::args;
@@ -54,12 +50,8 @@ fn file_exec() -> io::Result<()> {
         let mut table = table.lock().unwrap();
         table.insert("print", Box::new(print_func));
         table.insert("return", Box::new(return_func));
-        table.insert("var", Box::new(var_func));
-        table.insert("add", Box::new(add_func));
+        table.insert("let", Box::new(let_func));
         table.insert("exit", Box::new(exit_func));
-        table.insert("divide", Box::new(divide_func));
-        table.insert("subtract", Box::new(subtract_func));
-        table.insert("multiply", Box::new(multiply_func));
     }
 
     for line in lines {
@@ -87,16 +79,13 @@ fn shell_exec() -> io::Result<()> {
         Mutex<HashMap<&str, Box<dyn Fn(&mut HashMap<String, String>, Vec<&str>) + Send>>>,
     > = Arc::new(Mutex::new(HashMap::new()));
     let vars: Arc<Mutex<HashMap<String, String>>> = Arc::new(Mutex::new(HashMap::new()));
+    
     {
         let mut table = table.lock().unwrap();
         table.insert("print", Box::new(print_func));
         table.insert("return", Box::new(return_func));
-        table.insert("var", Box::new(var_func));
-        table.insert("add", Box::new(add_func));
+        table.insert("var", Box::new(let_func));
         table.insert("exit", Box::new(exit_func));
-        table.insert("divide", Box::new(divide_func));
-        table.insert("subtract", Box::new(subtract_func));
-        table.insert("multiply", Box::new(multiply_func));
     }
 
     let mut line = String::new();

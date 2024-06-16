@@ -1,6 +1,6 @@
 use crate::util::debug::is_debug;
 use std::collections::HashMap;
-use crate::util::errorhandler::errorhandler;
+use crate::util::warninghandler::warninghandler;
 
 pub fn print_func(vars: &mut HashMap<String, String>, args: Vec<&str>) {
     let output: Vec<String> = args
@@ -11,7 +11,7 @@ pub fn print_func(vars: &mut HashMap<String, String>, args: Vec<&str>) {
                 vars.get(var_name)
                     .cloned()
                     .unwrap_or_else(|| {
-                        errorhandler(&format!("Unknown variable: {}", var_name));
+                        warninghandler(&format!("Unknown variable: {}", var_name));
                         std::process::exit(1);
                     })
             } else {
