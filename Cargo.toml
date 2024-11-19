@@ -1,6 +1,8 @@
 [package]
 name = "snarp"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 
 [dependencies]
+cocoa = "0.26.0"
+objc = "0.2.7"

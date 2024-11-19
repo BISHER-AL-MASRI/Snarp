@@ -20,3 +20,4 @@ fn main() {
 
     parser::process_top_level_statements(&content, &functions);
 }
+

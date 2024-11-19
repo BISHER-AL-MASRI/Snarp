@@ -30,10 +30,9 @@ pub fn process_top_level_statements(code: &str, functions: &HashMap<String, Snar
     for line in lines {
         let trimmed_line = line.trim();
         if trimmed_line.is_empty() {
-            continue; 
+            continue;
         }
 
-        
         if trimmed_line.starts_with("func ") && trimmed_line.contains("{") {
             inside_function = true;
         }
@@ -44,7 +43,10 @@ pub fn process_top_level_statements(code: &str, functions: &HashMap<String, Snar
             continue;
         }
 
-        
+        if let Some(_) = crate::functions::parse_make_window(trimmed_line) {
+            continue;
+        }
+
         if let Some(output) = crate::functions::parse_print(trimmed_line) {
             println!("{}", output);
         } else if let Some(func_name) = parse_function_call(trimmed_line) {

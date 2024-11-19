@@ -1,10 +1,9 @@
 func greet() {
-    print("Hello, Snarp!");
-    print("eror")
+    print("this is a");
+    print("function!")
 }
 
 print("rgf")
+greet()
 
-greet()
-greet()
-print("regf")
+makeWindow("My Window", "macos");
