@@ -32,7 +32,7 @@ print("Hello, World!");
 The `makeWindow` function is used to create a window with a specified title and platform. The title and platform should be enclosed in double quotes.
 
 ```sp
-makeWindow("Window Title", "platform");
+makeWindow("Window Title", 500, 500 );
 ```
 
 ## Built-in Functions
@@ -51,16 +51,16 @@ print("Hello, World!");
 ```
 
 ### `makeWindow`
-Creates a window with the specified title and platform.
+Creates a window with the specified title and height and width. It is in a variable.
 
 **Syntax:**
 ```sp
-makeWindow("title", "platform");
+makeWindow("My Window", 500, 500);
 ```
 
 **Example:**
 ```sp
-makeWindow("My Window", "macos");
+windowVar = makeWindow("My Window", 500, 500);
 ```
 
 ## Example Code
@@ -75,6 +75,6 @@ func greet() {
 print("rgf");
 greet();
 
-makeWindow("My Window", "macos");
+myWindow = makeWindow("My Window", 500, 500);
 ```
 
