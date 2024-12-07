@@ -1,4 +1,4 @@
-use crate::functions::{SnarpFunction, Windoww};
+use crate::functions::{SnarpFunction, Window};
 use std::collections::HashMap;
 
 pub fn process_snarp_code(code: &str) -> HashMap<String, SnarpFunction> {
@@ -20,7 +20,7 @@ pub fn process_snarp_code(code: &str) -> HashMap<String, SnarpFunction> {
 }
 
 pub fn process_top_level_statements(code: &str, functions: &HashMap<String, SnarpFunction>) {
-    let mut variables: HashMap<String, Windoww> = HashMap::new();
+    let mut variables: HashMap<String, Window> = HashMap::new();
     let lines: Vec<&str> = code.lines().collect();
     let mut inside_function = false;
 

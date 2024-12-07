@@ -11,6 +11,11 @@ fn main() {
         return;
     }
 
+    if !args[1].ends_with(".sn") {
+        eprintln!("Warning: File extension is not .sn, please use .sn extension for Snarp files.");
+        return;
+    }
+
     let file_path = &args[1];
 
     let content = fs::read_to_string(file_path).expect("Could not read the file");

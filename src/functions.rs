@@ -51,7 +51,7 @@ pub fn parse_print(line: &str) -> Option<String> {
 }
 
 
-pub fn parse_make_window(line: &str, variables: &mut HashMap<String, Windoww>) -> Option<()> {
+pub fn parse_make_window(line: &str, variables: &mut HashMap<String, Window>) -> Option<()> {
     if let Some((var_name, call)) = line.split_once('=') {
         let var_name = var_name.trim();
         let call = call.trim();
@@ -79,14 +79,14 @@ pub fn parse_make_window(line: &str, variables: &mut HashMap<String, Windoww>) -
 
 #[derive(Debug)]
 #[allow(dead_code)]
-pub struct Windoww {
+pub struct Window {
     title: String,
     width: i32,
     height: i32,
 }
 
 
-pub fn create_window(title: &str, width: i32, height: i32) -> Windoww {
+pub fn create_window(title: &str, width: i32, height: i32) -> Window {
     gtk4::init().unwrap();
 
     let app = Application::builder().application_id("test").build();
@@ -106,7 +106,7 @@ pub fn create_window(title: &str, width: i32, height: i32) -> Windoww {
 
     app.run();
 
-    Windoww {
+    Window {
         title, 
         width,
         height,
