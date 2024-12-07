@@ -1,4 +1,6 @@
-use std::{collections::HashMap, thread};
+use std::collections::HashMap;
+use gio::prelude::{ApplicationExt, ApplicationExtManual};
+use gtk4::{prelude::GtkWindowExt, Application, ApplicationWindow};
 
 #[derive(Debug)]
 pub struct SnarpFunction {
@@ -49,52 +51,64 @@ pub fn parse_print(line: &str) -> Option<String> {
 }
 
 
-/// Parse `makeWindow` calls
-pub fn parse_make_window(line: &str) -> Option<()> {
-    if line.starts_with("makeWindow(") && line.ends_with(");") {
-        let params = &line["makeWindow(".len()..line.len() - 2]; // Extract parameters
-        let args: Vec<&str> = params.split(',').map(|s| s.trim()).collect();
+pub fn parse_make_window(line: &str, variables: &mut HashMap<String, Windoww>) -> Option<()> {
+    if let Some((var_name, call)) = line.split_once('=') {
+        let var_name = var_name.trim();
+        let call = call.trim();
 
-        if args.len() == 2 {
-            let title = args[0].trim_matches('"'); // Remove quotes
-            let platform = args[1].trim_matches('"');
-            create_window(title, platform);
-            return Some(());
+        if call.starts_with("createWindow(") && call.ends_with(");") {
+            let params = &call["createWindow(".len()..call.len() - 2]; // Extract parameters
+            let args: Vec<&str> = params.split(',').map(|s| s.trim()).collect();
+
+            if args.len() == 3 {
+                let title = args[0].trim_matches('"'); // Remove quotes
+                let width = args[1].parse::<i32>().unwrap();
+                let height = args[2].parse::<i32>().unwrap();
+                let window = create_window(title, width, height);
+                variables.insert(var_name.to_string(), window);
+                return Some(());
+            } else {
+                eprintln!("Error: Expected 3 arguments, found {}", args.len());
+            }
         }
     }
+
     None
 }
 
-/// Create a window
-pub fn create_window(title: &str, platform: &str) {
-    let title = title.to_string();
-    let platform = platform.to_string();
 
-    if platform == "macos" || platform == "macOS" {
-        println!("Creating macOS window with title '{}'", title);
+#[derive(Debug)]
+#[allow(dead_code)]
+pub struct Windoww {
+    title: String,
+    width: i32,
+    height: i32,
+}
 
-        use cocoa::appkit::{NSApp, NSApplication, NSApplicationActivationPolicyRegular, NSWindow, NSWindowStyleMask};
-        use cocoa::base::nil;
-        use cocoa::foundation::{NSAutoreleasePool, NSRect, NSPoint, NSSize, NSString};
 
-        unsafe {
-            let _pool = NSAutoreleasePool::new(nil);
-            let app = NSApp();
-            app.setActivationPolicy_(NSApplicationActivationPolicyRegular);
+pub fn create_window(title: &str, width: i32, height: i32) -> Windoww {
+    gtk4::init().unwrap();
 
-            let window = NSWindow::alloc(nil).initWithContentRect_styleMask_backing_defer_(
-                NSRect::new(NSPoint::new(0.0, 0.0), NSSize::new(400.0, 300.0)),
-                NSWindowStyleMask::NSTitledWindowMask | NSWindowStyleMask::NSClosableWindowMask,
-                cocoa::appkit::NSBackingStoreBuffered,
-                false,
-            );
-            let ns_title = NSString::alloc(nil).init_str(&title);
-            window.setTitle_(ns_title);
-            window.makeKeyAndOrderFront_(nil);
+    let app = Application::builder().application_id("test").build();
 
-            app.run(); // Run the app on the main thread
-        }
-    } else {
-        eprintln!("Unsupported platform: {}", platform);
+    let title = title.to_string(); 
+    let title_for_closure = title.clone(); 
+
+    app.connect_startup(move |app| {
+        let window = ApplicationWindow::builder()
+            .application(app)
+            .title(&title_for_closure)
+            .default_width(width)
+            .default_height(height)
+            .build();
+        window.present();
+    });
+
+    app.run();
+
+    Windoww {
+        title, 
+        width,
+        height,
     }
 }

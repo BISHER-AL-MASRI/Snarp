@@ -1,29 +1,26 @@
+use crate::functions::{SnarpFunction, Windoww};
 use std::collections::HashMap;
-use crate::functions::SnarpFunction;
-
 
 pub fn process_snarp_code(code: &str) -> HashMap<String, SnarpFunction> {
     let mut functions: HashMap<String, SnarpFunction> = HashMap::new();
     let mut lines: Vec<&str> = code.lines().collect();
 
-    
     let mut i = 0;
     while i < lines.len() {
-        let _line = lines[i].trim(); 
+        let _line = lines[i].trim();
         if let Some((func, end_index)) = parse_function_definition(&lines, i) {
             functions.insert(func.name.clone(), func);
-            lines.drain(i..=end_index); 
+            lines.drain(i..=end_index);
         } else {
-            i += 1; 
+            i += 1;
         }
     }
 
     functions
 }
 
-
-
 pub fn process_top_level_statements(code: &str, functions: &HashMap<String, SnarpFunction>) {
+    let mut variables: HashMap<String, Windoww> = HashMap::new();
     let lines: Vec<&str> = code.lines().collect();
     let mut inside_function = false;
 
@@ -43,7 +40,7 @@ pub fn process_top_level_statements(code: &str, functions: &HashMap<String, Snar
             continue;
         }
 
-        if let Some(_) = crate::functions::parse_make_window(trimmed_line) {
+        if crate::functions::parse_make_window(trimmed_line, &mut variables).is_some() {
             continue;
         }
 
@@ -58,7 +55,6 @@ pub fn process_top_level_statements(code: &str, functions: &HashMap<String, Snar
         }
     }
 }
-
 
 pub fn execute_function(func: &SnarpFunction, functions: &HashMap<String, SnarpFunction>) {
     let body_lines: Vec<&str> = func.body.lines().collect();
@@ -76,15 +72,16 @@ pub fn execute_function(func: &SnarpFunction, functions: &HashMap<String, SnarpF
     }
 }
 
-
-pub fn parse_function_definition(lines: &[&str], start_index: usize) -> Option<(SnarpFunction, usize)> {
+pub fn parse_function_definition(
+    lines: &[&str],
+    start_index: usize,
+) -> Option<(SnarpFunction, usize)> {
     let line = lines[start_index].trim();
     if line.starts_with("func ") && line.contains("(") && line.contains(")") && line.contains("{") {
         let name_start = "func ".len();
-        let name_end = line.find("(").unwrap(); 
+        let name_end = line.find("(").unwrap();
         let name = &line[name_start..name_end].trim();
 
-        
         let mut body = String::new();
         let mut end_index = start_index;
         let mut open_braces = 0;
@@ -116,13 +113,12 @@ pub fn parse_function_definition(lines: &[&str], start_index: usize) -> Option<(
     None
 }
 
-
 pub fn parse_function_call(line: &str) -> Option<String> {
     if line.ends_with("();") {
-        let func_name = &line[..line.len() - 3].trim(); 
+        let func_name = &line[..line.len() - 3].trim();
         return Some(func_name.to_string());
     } else if line.ends_with("()") {
-        let func_name = &line[..line.len() - 2].trim(); 
+        let func_name = &line[..line.len() - 2].trim();
         return Some(func_name.to_string());
     }
     None
